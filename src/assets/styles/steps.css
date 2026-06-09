@@ -12,7 +12,7 @@
     align-items: center;
     gap: 14px;
     padding: 12px 0;
-    cursor: pointer;
+    cursor: default;
 }
 
 /* Connecting line between markers */

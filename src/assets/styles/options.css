@@ -50,10 +50,25 @@
     visibility: visible;
 }
 
+.view-selection-button {
+    text-decoration: none;
+    color: #8a130a;
+    background-color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    z-index: 1;
+}
+
 
 .price-group-option {
-    padding: 16px;
-    width: 300px;
+    padding: 24px;
+    max-width: 400px;
+    width: 100%;
     border: 1px solid #ccc;
     cursor: pointer;
     border-radius: 8px;

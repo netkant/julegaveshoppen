@@ -1,8 +1,8 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import "./assets/styles/fonts.css";
 import "./assets/styles/options.css";
 import "./assets/styles/steps.css";
-import { readArtifact, useArtifact, useArtifactValue } from "./hooks/artifact";
+import { readArtifact, resetArtifact, useArtifact, useArtifactValue } from "./hooks/artifact";
 import {
     companyNameArtifact,
     currentStepArtifact,
@@ -19,6 +19,8 @@ import {
 
 function App() {
     const [currentStep, setCurrentStep] = useArtifact(currentStepArtifact);
+    const [submitted, setSubmitted] = useState(false);
+    const [error, setError] = useState(null);
 
     const selectedPriceGroups = useArtifactValue(selectedPriceGroupsArtifact);
     const selectedDeliveryMethod = useArtifactValue(selectedDeliveryMethodArtifact);
@@ -27,17 +29,68 @@ function App() {
 
     const handleOrderClick = () => {
         const orderObject = readArtifact(orderObjectArtifact);
-        console.log("orderObject", orderObject);
+        setError(null);
+
         fetch("https://julegaveshop6itd.barani.micusto.cloud/wp-json/nkt-dev/v1/create-stores", {
             method: "POST",
             body: JSON.stringify(orderObject),
         })
-            .then((response) => response.json())
-            .then((data) => console.log("data", data))
-            .catch((error) => console.error("error", error));
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Bestilling fejlede med status ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log("data", data);
+                setSubmitted(true);
+            })
+            .catch((error) => setError(error));
+    };
+
+    const handleOrderMoreClick = () => {
+        resetArtifact(selectedPriceGroupsArtifact);
+        resetArtifact(selectedDeliveryMethodArtifact);
+        resetArtifact(selectedDeliveryDateArtifact);
+        resetArtifact(emailArtifact);
+        resetArtifact(companyNameArtifact);
+        resetArtifact(currentStepArtifact);
+        setSubmitted(false);
     };
 
     const canOrder = selectedPriceGroups.length && selectedDeliveryMethod && selectedDeliveryDate && email;
+
+    const canAdvanceFromStep = {
+        1: Boolean(selectedPriceGroups.length),
+        2: Boolean(selectedDeliveryMethod),
+        3: Boolean(selectedDeliveryDate),
+        4: Boolean(email),
+    };
+
+    const canAdvance = Boolean(canAdvanceFromStep[currentStep]);
+
+    if (submitted) {
+        return (
+            <div className="wizard-page">
+                <div className="confirmation">
+                    <h1>Tak for at bestille en butik</h1>
+                    <button onClick={handleOrderMoreClick}>Bestil mere</button>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="wizard-page">
+                <div className="confirmation">
+                    <h1>Fejl ved bestilling</h1>
+                    <p>Der opstod en fejl ved bestillingen. Prøv igen senere. Kontakt support hvis fejlen fortsætter.</p>
+                    <button onClick={() => setError(null)}>Prøv igen</button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="wizard-page">
@@ -52,7 +105,6 @@ function App() {
                                 <li
                                     key={step.id}
                                     className={`step-item ${status}`}
-                                    onClick={() => setCurrentStep(step.id)}
                                 >
                                     <span className="step-marker">{status === "completed" ? "✓" : step.id}</span>
                                     <span className="step-label">
@@ -79,7 +131,12 @@ function App() {
                         </button>
 
                         {currentStep < steps.length ? (
-                            <button onClick={() => setCurrentStep(Math.min(currentStep + 1, steps.length))}>Næste</button>
+                            <button
+                                disabled={!canAdvance}
+                                onClick={() => setCurrentStep(Math.min(currentStep + 1, steps.length))}
+                            >
+                                Næste
+                            </button>
                         ) : (
                             <button
                                 className="order-button"
@@ -171,6 +228,13 @@ function Step1() {
                                     +
                                 </button>
                             </div>
+                            <a
+                                className="view-selection-button"
+                                href={priceGroup.url}
+                                target="_blank"
+                            >
+                                Se udvalg
+                            </a>
                         </div>
                     );
                 })}

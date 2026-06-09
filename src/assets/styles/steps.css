@@ -1,0 +1,85 @@
+/* Vertical step list (left column) */
+.step-list ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.step-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    cursor: pointer;
+}
+
+/* Connecting line between markers */
+.step-item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 17px;
+    top: 40px;
+    z-index: -1;
+    bottom: -30px;
+    width: 2px;
+    background-color: #d8d8d8;
+}
+
+.step-item.completed:not(:last-child)::before {
+    background-color: #18b678;
+}
+
+.step-marker {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    background-color: #fff;
+    border: 2px solid #d8d8d8;
+    color: #888;
+    transition: all 0.25s ease;
+}
+
+.step-item.active .step-marker {
+    border-color: #18b678;
+    color: #18b678;
+}
+
+.step-item.completed .step-marker {
+    background-color: #18b678;
+    border-color: #18b678;
+    color: #fff;
+}
+
+.step-label {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+}
+
+.step-kicker {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #999;
+}
+
+.step-name {
+    font-weight: 600;
+    color: #555;
+}
+
+.step-item.active .step-name {
+    color: #111;
+}
+
+/* Content (right column) */
+.step-content {
+    min-height: 200px;
+}

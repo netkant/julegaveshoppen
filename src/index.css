@@ -1,0 +1,90 @@
+.wizard-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.wizard {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.wizard-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.wizard-nav button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: 1px solid #8a130a;
+  background-color: #fff;
+  color: #8a130a;
+  cursor: pointer;
+  font: inherit;
+}
+
+.wizard-nav button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.wizard-nav .order-button {
+  margin-left: auto;
+  background-color: #8a130a;
+  border-color: #8a130a;
+  color: #fff;
+}
+
+@media (max-width: 720px) {
+  .wizard {
+    grid-template-columns: 1fr;
+  }
+}
+
+.order-button {
+  background-color: #8a130a;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.input-container label {
+  margin-bottom: 0;
+}
+
+.check-mark {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  background-color: #8a130a;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

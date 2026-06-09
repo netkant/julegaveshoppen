@@ -1,0 +1,105 @@
+.option {
+    padding: 16px;
+    border: 1px solid #ccc;
+    width: fit-content;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.option.selected {
+    outline: 2px solid #8a130a;
+    outline-offset: -1px;
+}
+
+.options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.quantity-stepper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    visibility: hidden;
+    z-index: 1;
+}
+
+.quantity-stepper button {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #8a130a;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.quantity-stepper span {
+    min-width: 20px;
+    text-align: center;
+}
+
+.option.selected .quantity-stepper {
+    visibility: visible;
+}
+
+
+.price-group-option {
+    padding: 16px;
+    width: 300px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-radius: 8px;
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.price-group-option-name {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 24px 0;
+}
+
+.price-group-option.selected {
+    outline: 2px solid #8a130a;
+    outline-offset: -1px;
+}
+
+.price-group-option-image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.price-group-option.selected .quantity-stepper {
+    visibility: visible;
+}
+
+.option-image-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.option-image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.option-image-container::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.32);
+}

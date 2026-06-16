@@ -2,20 +2,10 @@ import { Suspense, useState } from "react";
 import "./assets/styles/fonts.css";
 import "./assets/styles/options.css";
 import "./assets/styles/steps.css";
+import "./assets/styles/delivery-methods.css";
+import "./assets/styles/order-summary.css";
 import { readArtifact, resetArtifact, useArtifact, useArtifactValue } from "./hooks/artifact";
-import {
-    companyNameArtifact,
-    currentStepArtifact,
-    deliveryDatesArtifact,
-    deliveryMethodsArtifact,
-    emailArtifact,
-    orderObjectArtifact,
-    priceGroupsArtifact,
-    selectedDeliveryDateArtifact,
-    selectedDeliveryMethodArtifact,
-    selectedPriceGroupsArtifact,
-    steps,
-} from "./data";
+import { currentStepArtifact, infoArtifact, deliveryDatesArtifact, deliveryMethodsArtifact, orderObjectArtifact, priceGroupsArtifact, selectedDeliveryDateArtifact, selectedDeliveryMethodArtifact, selectedPriceGroupsArtifact, steps } from "./data";
 
 function App() {
     const [currentStep, setCurrentStep] = useArtifact(currentStepArtifact);
@@ -25,7 +15,7 @@ function App() {
     const selectedPriceGroups = useArtifactValue(selectedPriceGroupsArtifact);
     const selectedDeliveryMethod = useArtifactValue(selectedDeliveryMethodArtifact);
     const selectedDeliveryDate = useArtifactValue(selectedDeliveryDateArtifact);
-    const email = useArtifactValue(emailArtifact);
+    const info = useArtifactValue(infoArtifact);
 
     const handleOrderClick = () => {
         const orderObject = readArtifact(orderObjectArtifact);
@@ -52,19 +42,18 @@ function App() {
         resetArtifact(selectedPriceGroupsArtifact);
         resetArtifact(selectedDeliveryMethodArtifact);
         resetArtifact(selectedDeliveryDateArtifact);
-        resetArtifact(emailArtifact);
-        resetArtifact(companyNameArtifact);
         resetArtifact(currentStepArtifact);
+        resetArtifact(infoArtifact);
         setSubmitted(false);
     };
 
-    const canOrder = selectedPriceGroups.length && selectedDeliveryMethod && selectedDeliveryDate && email;
+    const canOrder = selectedPriceGroups.length && selectedDeliveryMethod && selectedDeliveryDate && info.email;
 
     const canAdvanceFromStep = {
         1: Boolean(selectedPriceGroups.length),
         2: Boolean(selectedDeliveryMethod),
         3: Boolean(selectedDeliveryDate),
-        4: Boolean(email),
+        4: Boolean(info.email && info.companyName && info.cvr && info.contactPerson && info.phoneNumber && info.address && info.postalCode && info.city),
     };
 
     const canAdvance = Boolean(canAdvanceFromStep[currentStep]);
@@ -165,6 +154,8 @@ function Step({ id }) {
             return <Step3 />;
         case 4:
             return <Step4 />;
+        case 5:
+            return <Step5 />;
         default:
             return null;
     }
@@ -257,8 +248,9 @@ function Step2() {
                         key={deliveryMethod.id}
                         onClick={() => setSelectedDeliveryMethod(deliveryMethod)}
                     >
-                        <p>{deliveryMethod.name}</p>
-                        {deliveryMethod.description && <p>{deliveryMethod.description}</p>}
+                        <p className="delivery-method-name">{deliveryMethod.name}</p>
+                        {deliveryMethod.description && <p className="delivery-method-description">{deliveryMethod.description}</p>}
+                        {deliveryMethod.price_text && <p className="delivery-method-price">{deliveryMethod.price_text}</p>}
                     </div>
                 ))}
             </div>
@@ -291,8 +283,11 @@ function Step3() {
 }
 
 function Step4() {
-    const [email, setEmail] = useArtifact(emailArtifact);
-    const [companyName, setCompanyName] = useArtifact(companyNameArtifact);
+    const [info, setInfo] = useArtifact(infoArtifact);
+
+    const handleInfoChange = (key, value) => {
+        setInfo((prev) => ({ ...prev, [key]: value }));
+    };
 
     return (
         <div>
@@ -301,24 +296,246 @@ function Step4() {
                 <label htmlFor="email">E-mail</label>
                 <input
                     id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={info.email}
+                    onChange={(e) => handleInfoChange("email", e.target.value)}
                     className="email-input input-field"
                     type="email"
                     placeholder="E-mail"
+                    data-1p-ignore="true"
                 />
             </div>
             <div className="input-container">
                 <label htmlFor="company-name">Firmanavn</label>
                 <input
                     id="company-name"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
+                    value={info.companyName}
+                    onChange={(e) => handleInfoChange("companyName", e.target.value)}
                     className="company-name-input input-field"
                     type="text"
                     placeholder="Firmanavn"
+                    data-1p-ignore="true"
+                />
+            </div>
+
+            <div className="input-container">
+                <label htmlFor="cvr">CVR</label>
+                <input
+                    id="cvr"
+                    value={info.cvr}
+                    onChange={(e) => handleInfoChange("cvr", e.target.value)}
+                    className="cvr-input input-field"
+                    type="text"
+                    placeholder="CVR"
+                    data-1p-ignore="true"
+                />
+            </div>
+
+            <div className="input-container">
+                <label htmlFor="contact-person">Kontaktperson</label>
+                <input
+                    id="contact-person"
+                    value={info.contactPerson}
+                    onChange={(e) => handleInfoChange("contactPerson", e.target.value)}
+                    className="contact-person-input input-field"
+                    type="text"
+                    placeholder="Kontaktperson"
+                    data-1p-ignore="true"
+                />
+            </div>
+
+            <div className="input-container">
+                <label htmlFor="phone-number">Telefonnummer</label>
+                <input
+                    id="phone-number"
+                    value={info.phoneNumber}
+                    onChange={(e) => handleInfoChange("phoneNumber", e.target.value)}
+                    className="phone-number-input input-field"
+                    type="text"
+                    placeholder="Telefonnummer"
+                    data-1p-ignore="true"
+                />
+            </div>
+
+            <div className="input-container">
+                <label htmlFor="address">Adresse</label>
+                <input
+                    id="address"
+                    value={info.address}
+                    onChange={(e) => handleInfoChange("address", e.target.value)}
+                    className="address-input input-field"
+                    type="text"
+                    placeholder="Adresse"
+                    data-1p-ignore="true"
+                />
+            </div>
+
+            <div className="input-container">
+                <label htmlFor="postal-code">Postnummer</label>
+                <input
+                    id="postal-code"
+                    value={info.postalCode}
+                    onChange={(e) => handleInfoChange("postalCode", e.target.value)}
+                    className="postal-code-input input-field"
+                    type="text"
+                    placeholder="Postnummer"
+                    data-1p-ignore="true"
+                />
+            </div>
+
+            <div className="input-container">
+                <label htmlFor="city">By</label>
+                <input
+                    id="city"
+                    value={info.city}
+                    onChange={(e) => handleInfoChange("city", e.target.value)}
+                    className="city-input input-field"
+                    type="text"
+                    placeholder="By"
+                    data-1p-ignore="true"
                 />
             </div>
         </div>
     );
+}
+
+function Step5() {
+    const selectedPriceGroups = useArtifactValue(selectedPriceGroupsArtifact);
+    const selectedDeliveryMethod = useArtifactValue(selectedDeliveryMethodArtifact);
+    const selectedDeliveryDate = useArtifactValue(selectedDeliveryDateArtifact);
+    const info = useArtifactValue(infoArtifact);
+
+    const getDeliveryTotal = (totalCards) => {
+        if (selectedDeliveryMethod?.price_calc === "fixed") {
+            return selectedDeliveryMethod?.price;
+        }
+
+        if (selectedDeliveryMethod?.price_calc === "each") {
+            return selectedDeliveryMethod?.price * totalCards;
+        }
+
+        return 0;
+    };
+
+    const rows = selectedPriceGroups.map((priceGroup) => {
+        const unitValue = parsePriceFromName(priceGroup.name);
+        return {
+            id: priceGroup.id,
+            name: priceGroup.name,
+            quantity: priceGroup.quantity,
+            unitValue,
+            lineTotal: unitValue * priceGroup.quantity,
+        };
+    });
+
+    const totalCards = rows.reduce((sum, row) => sum + row.quantity, 0);
+    const giftCardSubtotal = rows.reduce((sum, row) => sum + row.lineTotal, 0);
+    const total = giftCardSubtotal + getDeliveryTotal(totalCards);
+
+    return (
+        <div className="order-summary">
+            <h2>Oversigt over din bestilling</h2>
+
+            <table className="summary-table">
+                <thead>
+                    <tr>
+                        <th>Vare</th>
+                        <th>Antal</th>
+                        <th>Stykpris</th>
+                        <th>Pris</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows.map((row) => (
+                        <tr key={row.id}>
+                            <td>Gavekort {row.name}</td>
+                            <td>{row.quantity}</td>
+                            <td>{formatPrice(row.unitValue)}</td>
+                            <td>{formatPrice(row.lineTotal)}</td>
+                        </tr>
+                    ))}
+                    {selectedDeliveryMethod && (
+                        <tr>
+                            <td>Levering — {selectedDeliveryMethod.name}</td>
+                            <td>{totalCards > 0 ? totalCards : "—"}</td>
+                            <td>{formatPrice(selectedDeliveryMethod?.price)}</td>
+                            <td>{formatPrice(getDeliveryTotal(totalCards))}</td>
+                        </tr>
+                    )}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colSpan={3}>Total</td>
+                        <td>{formatPrice(total)}</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div className="summary-details">
+                <div className="summary-block">
+                    <h3>Leveringstidspunkt</h3>
+                    {selectedDeliveryDate ? (
+                        <dl className="summary-list">
+                            <div>
+                                <dt>Uge</dt>
+                                <dd>{selectedDeliveryDate.week_number}</dd>
+                            </div>
+                            <div>
+                                <dt>Seneste bestilling</dt>
+                                <dd>{selectedDeliveryDate.order_date}</dd>
+                            </div>
+                            <div>
+                                <dt>Leveringsdato</dt>
+                                <dd>{selectedDeliveryDate.delivery_date}</dd>
+                            </div>
+                        </dl>
+                    ) : (
+                        <p>Ikke valgt</p>
+                    )}
+                </div>
+
+                <div className="summary-block">
+                    <h3>Dine oplysninger</h3>
+                    <dl className="summary-list">
+                        <div>
+                            <dt>E-mail</dt>
+                            <dd>{info.email || "—"}</dd>
+                        </div>
+                        <div>
+                            <dt>Firmanavn</dt>
+                            <dd>{info.companyName || "—"}</dd>
+                        </div>
+                        <div>
+                            <dt>CVR</dt>
+                            <dd>{info.cvr || "—"}</dd>
+                        </div>
+                        <div>
+                            <dt>Telefonnummer</dt>
+                            <dd>{info.phoneNumber || "—"}</dd>
+                        </div>
+                        <div>
+                            <dt>Adresse</dt>
+                            <dd>{info.address || "—"}</dd>
+                        </div>
+                        <div>
+                            <dt>Postnummer</dt>
+                            <dd>{info.postalCode || "—"}</dd>
+                        </div>
+                        <div>
+                            <dt>By</dt>
+                            <dd>{info.city || "—"}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function parsePriceFromName(name) {
+    const match = String(name).replace(/\./g, "").match(/\d+/);
+    return match ? Number(match[0]) : 0;
+}
+
+function formatPrice(value) {
+    return `${value.toLocaleString("da-DK")} kr.`;
 }

@@ -22,14 +22,27 @@ export const steps = [
         id: 4,
         name: "Angiv din e-mail og firmanavn",
     },
+    {
+        id: 5,
+        name: "Oversigt og bestilling",
+    },
 ];
 
 /**
  * Wizard navigation + contact details.
  */
 export const currentStepArtifact = artifact(1);
-export const emailArtifact = artifact("");
-export const companyNameArtifact = artifact("");
+
+export const infoArtifact = artifact({
+    email: "",
+    companyName: "",
+    cvr: "",
+    phoneNumber: "",
+    address: "",
+    postalCode: "",
+    city: "",
+    contactPerson: "",
+});
 
 /**
  * Price Groups -- fetched lazily on first read (component suspends until ready).
@@ -68,6 +81,5 @@ export const orderObjectArtifact = artifact(({ get }) => ({
     price_groups: get(selectedPriceGroupsArtifact).map((pg) => ({ id: pg.id, quantity: pg.quantity })),
     delivery_method: get(selectedDeliveryMethodArtifact)?.id,
     delivery_date: get(selectedDeliveryDateArtifact)?.id,
-    email: get(emailArtifact),
-    company_name: get(companyNameArtifact),
+    info: get(infoArtifact),
 }));

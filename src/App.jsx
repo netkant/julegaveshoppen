@@ -272,9 +272,9 @@ function Step3() {
                         key={deliverydate.id}
                         onClick={() => setSelectedDeliveryDate(deliverydate)}
                     >
-                        <p>Uge {deliverydate.week_number}:</p>
-                        <p>Seneste bestilling: {deliverydate.order_date}</p>
-                        <p>Leveringsdato: {deliverydate.delivery_date}</p>
+                        <p className="delivery-date-week">Uge: {deliverydate.week_number}</p>
+                        <p className="delivery-date-order-date">Seneste bestilling: {deliverydate.order_date}</p>
+                        <p className="delivery-date-delivery-date">Leveringsdato: {deliverydate.delivery_date}</p>
                     </div>
                 ))}
             </div>
@@ -405,12 +405,14 @@ function Step5() {
     const info = useArtifactValue(infoArtifact);
 
     const getDeliveryTotal = (totalCards) => {
+        const deliveryPrice = Number(selectedDeliveryMethod?.price) || 0;
+
         if (selectedDeliveryMethod?.price_calc === "fixed") {
-            return selectedDeliveryMethod?.price;
+            return deliveryPrice;
         }
 
         if (selectedDeliveryMethod?.price_calc === "each") {
-            return selectedDeliveryMethod?.price * totalCards;
+            return deliveryPrice * totalCards;
         }
 
         return 0;
@@ -537,5 +539,5 @@ function parsePriceFromName(name) {
 }
 
 function formatPrice(value) {
-    return `${value.toLocaleString("da-DK")} kr.`;
+    return `${Number(value).toLocaleString("da-DK")} kr.`;
 }

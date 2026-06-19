@@ -14,3 +14,10 @@
     color: #8a130a;
     margin-top: 20px;
 }
+
+
+.delivery-date-week {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}

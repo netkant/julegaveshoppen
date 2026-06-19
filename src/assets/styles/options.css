@@ -39,6 +39,7 @@
     font-size: 18px;
     line-height: 1;
     cursor: pointer;
+    padding: 0 !important;
 }
 
 .quantity-stepper span {
@@ -80,7 +81,7 @@
 .price-group-option-name {
     font-size: 32px;
     font-weight: 600;
-    margin: 0 0 24px 0;
+    margin: 0 0 24px 0 !important;
 }
 
 .price-group-option.selected {

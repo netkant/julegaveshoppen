@@ -1,23 +1,23 @@
 .delivery-method-name {
     font-size: 20px;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 4px !important;
 }
 
 .delivery-method-description {
-    margin-top: 12px;
+    margin-top: 12px !important;
 }
 
 .delivery-method-price {
     font-size: 14px;
     font-weight: 600;
     color: #8a130a;
-    margin-top: 20px;
+    margin-top: 20px !important;
 }
 
 
 .delivery-date-week {
     font-size: 20px;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 4px !important;
 }

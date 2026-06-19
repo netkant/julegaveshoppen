@@ -10,6 +10,7 @@ import { currentStepArtifact, infoArtifact, deliveryDatesArtifact, deliveryMetho
 function App() {
     const [currentStep, setCurrentStep] = useArtifact(currentStepArtifact);
     const [submitted, setSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const selectedPriceGroups = useArtifactValue(selectedPriceGroupsArtifact);
@@ -18,9 +19,9 @@ function App() {
     const info = useArtifactValue(infoArtifact);
 
     const handleOrderClick = () => {
+        setIsLoading(true);
         const orderObject = readArtifact(orderObjectArtifact);
         setError(null);
-
         fetch("https://julegaveshop6itd.barani.micusto.cloud/wp-json/nkt-dev/v1/create-stores", {
             method: "POST",
             body: JSON.stringify(orderObject),
@@ -34,7 +35,9 @@ function App() {
             .then((data) => {
                 console.log("data", data);
                 setSubmitted(true);
+                setIsLoading(false);
             })
+            .finally(() => setIsLoading(false))
             .catch((error) => setError(error));
     };
 
@@ -129,10 +132,10 @@ function App() {
                         ) : (
                             <button
                                 className="order-button"
-                                disabled={!canOrder}
+                                disabled={!canOrder || isLoading}
                                 onClick={() => handleOrderClick()}
                             >
-                                Bestil
+                                {isLoading ? "Bestiller..." : "Bestil"}
                             </button>
                         )}
                     </div>

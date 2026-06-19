@@ -79,7 +79,7 @@ export const selectedDeliveryDateArtifact = artifact(null);
  */
 export const orderObjectArtifact = artifact(({ get }) => ({
     price_groups: get(selectedPriceGroupsArtifact).map((pg) => ({ id: pg.id, quantity: pg.quantity })),
-    delivery_method: get(selectedDeliveryMethodArtifact)?.id,
-    delivery_date: get(selectedDeliveryDateArtifact)?.id,
+    delivery_method: get(selectedDeliveryMethodArtifact),
+    delivery_date: get(selectedDeliveryDateArtifact),
     info: get(infoArtifact),
 }));

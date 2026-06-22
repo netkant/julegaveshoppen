@@ -28,7 +28,7 @@
 }
 
 .step-item.completed:not(:last-child)::before {
-    background-color: #18b678;
+    background-color: #3d2512;
 }
 
 .step-marker {
@@ -47,13 +47,13 @@
 }
 
 .step-item.active .step-marker {
-    border-color: #18b678;
-    color: #18b678;
+    border-color: #3d2512;
+    color: #3d2512;
 }
 
 .step-item.completed .step-marker {
-    background-color: #18b678;
-    border-color: #18b678;
+    background-color: #3d2512;
+    border-color: #3d2512;
     color: #fff;
 }
 

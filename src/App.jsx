@@ -3,9 +3,23 @@ import "./assets/styles/fonts.css";
 import "./assets/styles/options.css";
 import "./assets/styles/steps.css";
 import "./assets/styles/delivery-methods.css";
+import "./assets/styles/delivery-dates.css";
 import "./assets/styles/order-summary.css";
+import "./assets/styles/price-groups.css";
 import { readArtifact, resetArtifact, useArtifact, useArtifactValue } from "./hooks/artifact";
-import { currentStepArtifact, infoArtifact, deliveryDatesArtifact, deliveryMethodsArtifact, orderObjectArtifact, priceGroupsArtifact, selectedDeliveryDateArtifact, selectedDeliveryMethodArtifact, selectedPriceGroupsArtifact, steps } from "./data";
+import {
+    currentStepArtifact,
+    infoArtifact,
+    deliveryDatesArtifact,
+    deliveryMethodsArtifact,
+    orderObjectArtifact,
+    priceGroupsArtifact,
+    selectedDeliveryDateArtifact,
+    selectedDeliveryMethodArtifact,
+    selectedPriceGroupsArtifact,
+    steps,
+    jgVars,
+} from "./data";
 
 function App() {
     const [currentStep, setCurrentStep] = useArtifact(currentStepArtifact);
@@ -22,13 +36,15 @@ function App() {
         setIsLoading(true);
         const orderObject = readArtifact(orderObjectArtifact);
         setError(null);
-        fetch("https://julegaveshop6itd.barani.micusto.cloud/wp-json/nkt-dev/v1/create-stores", {
+        fetch(`${jgVars.apiBase}/create-stores`, {
             method: "POST",
             body: JSON.stringify(orderObject),
         })
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error(`Bestilling fejlede med status ${response.status}`);
+                    return response.json().then((data) => {
+                        throw new Error(data.message);
+                    });
                 }
                 return response.json();
             })
@@ -78,6 +94,7 @@ function App() {
                 <div className="confirmation">
                     <h1>Fejl ved bestilling</h1>
                     <p>Der opstod en fejl ved bestillingen. Prøv igen senere. Kontakt support hvis fejlen fortsætter.</p>
+                    <p>Fejl: {error.message}</p>
                     <button onClick={() => setError(null)}>Prøv igen</button>
                 </div>
             </div>
@@ -126,6 +143,7 @@ function App() {
                             <button
                                 disabled={!canAdvance}
                                 onClick={() => setCurrentStep(Math.min(currentStep + 1, steps.length))}
+                                className="next-button"
                             >
                                 Næste
                             </button>
@@ -135,7 +153,7 @@ function App() {
                                 disabled={!canOrder || isLoading}
                                 onClick={() => handleOrderClick()}
                             >
-                                {isLoading ? "Bestiller..." : "Bestil"}
+                                {isLoading ? "Bestiller..." : "Bestil gaveshop"}
                             </button>
                         )}
                     </div>
@@ -178,13 +196,23 @@ function Step1() {
     };
 
     const handlePriceGroupQuantityChange = (priceGroup, delta) => {
-        setSelectedPriceGroups((prev) => prev.map((pg) => (pg.id === priceGroup.id ? { ...pg, quantity: Math.max(5, pg.quantity + delta) } : pg)));
+        setSelectedPriceGroups((prev) => prev.map((pg) => (pg.id === priceGroup.id ? { ...pg, quantity: Math.max(5, Number(pg.quantity) + delta) } : pg)));
+    };
+
+    const handlePriceGroupQuantityInputChange = (priceGroup, value) => {
+        if (Number(value) > 999) {
+            value = 999;
+        }
+        if (Number(value) < 5) {
+            return;
+        }
+        setSelectedPriceGroups((prev) => prev.map((pg) => (pg.id === priceGroup.id ? { ...pg, quantity: Math.max(5, Number(value)) } : pg)));
     };
 
     return (
         <div>
             <h2>Vælg shops</h2>
-            <div className="options">
+            <div className="price-groups-options">
                 {priceGroups.map((priceGroup) => {
                     const selected = selectedPriceGroups.find((pg) => pg.id === priceGroup.id);
                     return (
@@ -202,33 +230,75 @@ function Step1() {
                                     />
                                 </div>
                             )}
-                            {selected && <div className="check-mark">✓</div>}
+                            {selected && (
+                                <div className="check-mark">
+                                    <CheckMark />
+                                </div>
+                            )}
                             <p className="price-group-option-name">{priceGroup.name}</p>
-                            <div
-                                className="quantity-stepper"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <button
-                                    type="button"
-                                    onClick={() => handlePriceGroupQuantityChange(priceGroup, -1)}
+                            <div className="price-group-option-bottom">
+                                <div
+                                    className="quantity-stepper"
+                                    onClick={(e) => e.stopPropagation()}
                                 >
-                                    -
-                                </button>
-                                <span>{selected ? selected.quantity : 5}</span>
-                                <button
-                                    type="button"
-                                    onClick={() => handlePriceGroupQuantityChange(priceGroup, 1)}
+                                    <button
+                                        type="button"
+                                        className="quantity-left"
+                                        onClick={() => handlePriceGroupQuantityChange(priceGroup, -1)}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="lucide lucide-minus-icon lucide-minus"
+                                        >
+                                            <path d="M5 12h14" />
+                                        </svg>
+                                    </button>
+                                    <input
+                                        className="quantity-stepper-value"
+                                        type="number"
+                                        min="5"
+                                        max="999"
+                                        value={selected ? selected.quantity : 5}
+                                        onChange={(e) => handlePriceGroupQuantityInputChange(priceGroup, e.target.value)}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="quantity-right"
+                                        onClick={() => handlePriceGroupQuantityChange(priceGroup, 1)}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="lucide lucide-plus-icon lucide-plus"
+                                        >
+                                            <path d="M5 12h14" />
+                                            <path d="M12 5v14" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <a
+                                    className="view-selection-button"
+                                    href={priceGroup.url}
+                                    target="_blank"
                                 >
-                                    +
-                                </button>
+                                    Se udvalg
+                                </a>
                             </div>
-                            <a
-                                className="view-selection-button"
-                                href={priceGroup.url}
-                                target="_blank"
-                            >
-                                Se udvalg
-                            </a>
                         </div>
                     );
                 })}
@@ -244,16 +314,23 @@ function Step2() {
     return (
         <div>
             <h2>Vælg gavekort levering</h2>
-            <div className="options">
+            <div className="delivery-methods-options">
                 {deliveryMethods.map((deliveryMethod) => (
                     <div
                         className={`option ${selectedDeliveryMethod?.id === deliveryMethod.id ? "selected" : ""}`}
                         key={deliveryMethod.id}
                         onClick={() => setSelectedDeliveryMethod(deliveryMethod)}
                     >
-                        <p className="delivery-method-name">{deliveryMethod.name}</p>
-                        {deliveryMethod.description && <p className="delivery-method-description">{deliveryMethod.description}</p>}
-                        {deliveryMethod.price_text && <p className="delivery-method-price">{deliveryMethod.price_text}</p>}
+                        {selectedDeliveryMethod?.id === deliveryMethod.id && (
+                            <div className="check-mark">
+                                <CheckMark />
+                            </div>
+                        )}
+                        <div>
+                            <p className="delivery-method-name">{deliveryMethod.name}</p>
+                            {deliveryMethod.description && <p className="delivery-method-description">{deliveryMethod.description}</p>}
+                        </div>
+                        <div>{deliveryMethod.price_text && <p className="delivery-method-price">{deliveryMethod.price_text}</p>}</div>
                     </div>
                 ))}
             </div>
@@ -268,16 +345,27 @@ function Step3() {
     return (
         <div>
             <h2>Vælg pakkeleveringstidspunkt</h2>
-            <div className="options">
+            <div className="delivery-dates-options">
                 {deliverydates.map((deliverydate) => (
                     <div
                         className={`option ${selectedDeliveryDate?.id === deliverydate.id ? "selected" : ""}`}
                         key={deliverydate.id}
                         onClick={() => setSelectedDeliveryDate(deliverydate)}
                     >
+                        {selectedDeliveryDate?.id === deliverydate.id && (
+                            <div className="check-mark">
+                                <CheckMark />
+                            </div>
+                        )}
                         <p className="delivery-date-week">Uge: {deliverydate.week_number}</p>
-                        <p className="delivery-date-order-date">Seneste bestilling: {deliverydate.order_date}</p>
-                        <p className="delivery-date-delivery-date">Leveringsdato: {deliverydate.delivery_date}</p>
+                        <p className="delivery-date-order-date">
+                            Seneste bestilling:
+                            <span>{deliverydate.order_date}</span>
+                        </p>
+                        <p className="delivery-date-delivery-date">
+                            Leveringsdato:
+                            <span>{deliverydate.delivery_date}</span>
+                        </p>
                     </div>
                 ))}
             </div>
@@ -293,47 +381,64 @@ function Step4() {
     };
 
     return (
-        <div>
+        <div className="input-container-column">
             <h2>Angiv din e-mail og firmanavn</h2>
-            <div className="input-container">
-                <label htmlFor="email">E-mail</label>
-                <input
-                    id="email"
-                    value={info.email}
-                    onChange={(e) => handleInfoChange("email", e.target.value)}
-                    className="email-input input-field"
-                    type="email"
-                    placeholder="E-mail"
-                    data-1p-ignore="true"
-                />
-            </div>
-            <div className="input-container">
-                <label htmlFor="company-name">Firmanavn</label>
-                <input
-                    id="company-name"
-                    value={info.companyName}
-                    onChange={(e) => handleInfoChange("companyName", e.target.value)}
-                    className="company-name-input input-field"
-                    type="text"
-                    placeholder="Firmanavn"
-                    data-1p-ignore="true"
-                />
+
+            <div className="input-container-row">
+                <div className="input-container required">
+                    <label htmlFor="email">E-mail</label>
+                    <input
+                        id="email"
+                        value={info.email}
+                        onChange={(e) => handleInfoChange("email", e.target.value)}
+                        className="email-input input-field"
+                        type="email"
+                        data-1p-ignore="true"
+                        required
+                    />
+                </div>
+                <div className="input-container required">
+                    <label htmlFor="phone-number">Telefonnummer</label>
+                    <input
+                        id="phone-number"
+                        value={info.phoneNumber}
+                        onChange={(e) => handleInfoChange("phoneNumber", e.target.value)}
+                        className="phone-number-input input-field"
+                        type="text"
+                        data-1p-ignore="true"
+                        required
+                    />
+                </div>
             </div>
 
-            <div className="input-container">
-                <label htmlFor="cvr">CVR</label>
-                <input
-                    id="cvr"
-                    value={info.cvr}
-                    onChange={(e) => handleInfoChange("cvr", e.target.value)}
-                    className="cvr-input input-field"
-                    type="text"
-                    placeholder="CVR"
-                    data-1p-ignore="true"
-                />
+            <div className="input-container-row">
+                <div className="input-container required">
+                    <label htmlFor="company-name">Firmanavn</label>
+                    <input
+                        id="company-name"
+                        value={info.companyName}
+                        onChange={(e) => handleInfoChange("companyName", e.target.value)}
+                        className="company-name-input input-field"
+                        type="text"
+                        data-1p-ignore="true"
+                        required
+                    />
+                </div>
+                <div className="input-container required">
+                    <label htmlFor="cvr">CVR</label>
+                    <input
+                        id="cvr"
+                        value={info.cvr}
+                        onChange={(e) => handleInfoChange("cvr", e.target.value)}
+                        className="cvr-input input-field"
+                        type="text"
+                        data-1p-ignore="true"
+                        required
+                    />
+                </div>
             </div>
 
-            <div className="input-container">
+            <div className="input-container required">
                 <label htmlFor="contact-person">Kontaktperson</label>
                 <input
                     id="contact-person"
@@ -341,25 +446,12 @@ function Step4() {
                     onChange={(e) => handleInfoChange("contactPerson", e.target.value)}
                     className="contact-person-input input-field"
                     type="text"
-                    placeholder="Kontaktperson"
                     data-1p-ignore="true"
+                    required
                 />
             </div>
 
-            <div className="input-container">
-                <label htmlFor="phone-number">Telefonnummer</label>
-                <input
-                    id="phone-number"
-                    value={info.phoneNumber}
-                    onChange={(e) => handleInfoChange("phoneNumber", e.target.value)}
-                    className="phone-number-input input-field"
-                    type="text"
-                    placeholder="Telefonnummer"
-                    data-1p-ignore="true"
-                />
-            </div>
-
-            <div className="input-container">
+            <div className="input-container required">
                 <label htmlFor="address">Adresse</label>
                 <input
                     id="address"
@@ -367,35 +459,40 @@ function Step4() {
                     onChange={(e) => handleInfoChange("address", e.target.value)}
                     className="address-input input-field"
                     type="text"
-                    placeholder="Adresse"
                     data-1p-ignore="true"
+                    required
                 />
             </div>
 
-            <div className="input-container">
-                <label htmlFor="postal-code">Postnummer</label>
-                <input
-                    id="postal-code"
-                    value={info.postalCode}
-                    onChange={(e) => handleInfoChange("postalCode", e.target.value)}
-                    className="postal-code-input input-field"
-                    type="text"
-                    placeholder="Postnummer"
-                    data-1p-ignore="true"
-                />
-            </div>
+            <div className="input-container-row">
+                <div
+                    className="input-container required"
+                    style={{ width: "33%" }}
+                >
+                    <label htmlFor="postal-code">Postnummer</label>
+                    <input
+                        id="postal-code"
+                        value={info.postalCode}
+                        onChange={(e) => handleInfoChange("postalCode", e.target.value)}
+                        className="postal-code-input input-field"
+                        type="text"
+                        data-1p-ignore="true"
+                        required
+                    />
+                </div>
 
-            <div className="input-container">
-                <label htmlFor="city">By</label>
-                <input
-                    id="city"
-                    value={info.city}
-                    onChange={(e) => handleInfoChange("city", e.target.value)}
-                    className="city-input input-field"
-                    type="text"
-                    placeholder="By"
-                    data-1p-ignore="true"
-                />
+                <div className="input-container required">
+                    <label htmlFor="city">By</label>
+                    <input
+                        id="city"
+                        value={info.city}
+                        onChange={(e) => handleInfoChange("city", e.target.value)}
+                        className="city-input input-field"
+                        type="text"
+                        data-1p-ignore="true"
+                        required
+                    />
+                </div>
             </div>
         </div>
     );
@@ -460,12 +557,18 @@ function Step5() {
                     ))}
                     {selectedDeliveryMethod && (
                         <tr>
-                            <td>Levering — {selectedDeliveryMethod.name}</td>
+                            <td>Gavekortlevering — {selectedDeliveryMethod.name}</td>
                             <td>{totalCards > 0 ? totalCards : "—"}</td>
                             <td>{formatPrice(selectedDeliveryMethod?.price)}</td>
                             <td>{formatPrice(getDeliveryTotal(totalCards))}</td>
                         </tr>
                     )}
+                    <tr>
+                        <td>Pakkelevering</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>Se note</td>
+                    </tr>
                 </tbody>
                 <tfoot>
                     <tr>
@@ -479,20 +582,26 @@ function Step5() {
                 <div className="summary-block">
                     <h3>Leveringstidspunkt</h3>
                     {selectedDeliveryDate ? (
-                        <dl className="summary-list">
-                            <div>
-                                <dt>Uge</dt>
-                                <dd>{selectedDeliveryDate.week_number}</dd>
+                        <>
+                            <dl className="summary-list">
+                                <div>
+                                    <dt>Uge</dt>
+                                    <dd>{selectedDeliveryDate.week_number}</dd>
+                                </div>
+                                <div>
+                                    <dt>Seneste bestilling</dt>
+                                    <dd>{selectedDeliveryDate.order_date}</dd>
+                                </div>
+                                <div>
+                                    <dt>Leveringsdato</dt>
+                                    <dd>{selectedDeliveryDate.delivery_date}</dd>
+                                </div>
+                            </dl>
+                            <div className="delivery-date-note-container">
+                                <p className="delivery-date-note-title">Note:</p>
+                                <p className="delivery-date-note">{selectedDeliveryDate.note}</p>
                             </div>
-                            <div>
-                                <dt>Seneste bestilling</dt>
-                                <dd>{selectedDeliveryDate.order_date}</dd>
-                            </div>
-                            <div>
-                                <dt>Leveringsdato</dt>
-                                <dd>{selectedDeliveryDate.delivery_date}</dd>
-                            </div>
-                        </dl>
+                        </>
                     ) : (
                         <p>Ikke valgt</p>
                     )}
@@ -543,4 +652,25 @@ function parsePriceFromName(name) {
 
 function formatPrice(value) {
     return `${Number(value).toLocaleString("da-DK")} kr.`;
+}
+
+function CheckMark() {
+    return (
+        <span>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-check-icon lucide-check"
+            >
+                <path d="M20 6 9 17l-5-5" />
+            </svg>
+        </span>
+    );
 }

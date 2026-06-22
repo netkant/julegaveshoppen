@@ -1,7 +1,6 @@
 import { artifact } from "./hooks/artifact";
 
-const API_BASE = "https://julegaveshop6itd.barani.micusto.cloud/wp-json/nkt-dev/v1";
-
+export const jgVars = JSON.parse(document.getElementById("form-root").dataset.params || "{}");
 /**
  * Static step configuration (not state, just the wizard layout).
  */
@@ -12,11 +11,11 @@ export const steps = [
     },
     {
         id: 2,
-        name: "Vælg gavekort leveringsmetode",
+        name: "Vælg gavekort-leveringsmetode",
     },
     {
         id: 3,
-        name: "Vælg pakkeleveringstidspunkt",
+        name: "Vælg pakke-leveringstidspunkt",
     },
     {
         id: 4,
@@ -48,7 +47,7 @@ export const infoArtifact = artifact({
  * Price Groups -- fetched lazily on first read (component suspends until ready).
  */
 export const priceGroupsArtifact = artifact(() =>
-    fetch(`${API_BASE}/price-groups`)
+    fetch(`${jgVars.apiBase}/price-groups`)
         .then((response) => response.json())
         .then((data) => data.items),
 );
@@ -58,7 +57,7 @@ export const selectedPriceGroupsArtifact = artifact([]);
  * Delivery Methods.
  */
 export const deliveryMethodsArtifact = artifact(() =>
-    fetch(`${API_BASE}/delivery-methods`)
+    fetch(`${jgVars.apiBase}/delivery-methods`)
         .then((response) => response.json())
         .then((data) => data.items),
 );
@@ -68,7 +67,7 @@ export const selectedDeliveryMethodArtifact = artifact(null);
  * Delivery Dates.
  */
 export const deliveryDatesArtifact = artifact(() =>
-    fetch(`${API_BASE}/delivery-dates`)
+    fetch(`${jgVars.apiBase}/delivery-dates`)
         .then((response) => response.json())
         .then((data) => data.items),
 );

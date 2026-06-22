@@ -1,0 +1,22 @@
+.delivery-dates-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.delivery-date-order-date span,
+.delivery-date-delivery-date span {
+    font-weight: 600;
+}
+
+.delivery-date-order-date,
+.delivery-date-delivery-date {
+    display: flex;
+    gap: 4px;
+    justify-content: space-between;
+}
+
+.delivery-dates-options .delivery-date-week {
+    margin-top: 0px !important;
+    margin-bottom: 20px !important;
+}

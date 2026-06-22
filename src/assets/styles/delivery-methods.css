@@ -2,6 +2,7 @@
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 4px !important;
+    margin-top: 0px !important;
 }
 
 .delivery-method-description {
@@ -12,12 +13,25 @@
     font-size: 14px;
     font-weight: 600;
     color: #8a130a;
-    margin-top: 20px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
 }
-
 
 .delivery-date-week {
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 4px !important;
+}
+
+.delivery-methods-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.delivery-methods-options .option {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
 }

@@ -126,18 +126,20 @@ function App() {
                     </ol>
                 </aside>
 
-                <section className="step-content">
+                <section className={`step-content step-${currentStep}`}>
                     <Suspense fallback={<p>Indlæser...</p>}>
-                        <Step id={currentStep} />
+                        <Step step={steps.find((step) => step.id === currentStep)} />
                     </Suspense>
 
                     <div className="wizard-nav">
-                        <button
-                            disabled={currentStep === 1}
-                            onClick={() => setCurrentStep(currentStep - 1)}
-                        >
-                            Forrige
-                        </button>
+                        {currentStep > 1 && (
+                            <button
+                                disabled={currentStep === 1}
+                                onClick={() => setCurrentStep(currentStep - 1)}
+                            >
+                                Forrige
+                            </button>
+                        )}
 
                         {currentStep < steps.length ? (
                             <button
@@ -165,24 +167,24 @@ function App() {
 
 export default App;
 
-function Step({ id }) {
-    switch (id) {
+function Step({ step }) {
+    switch (step.id) {
         case 1:
-            return <Step1 />;
+            return <Step1 step={step} />;
         case 2:
-            return <Step2 />;
+            return <Step2 step={step} />;
         case 3:
-            return <Step3 />;
+            return <Step3 step={step} />;
         case 4:
-            return <Step4 />;
+            return <Step4 step={step} />;
         case 5:
-            return <Step5 />;
+            return <Step5 step={step} />;
         default:
             return null;
     }
 }
 
-function Step1() {
+function Step1({ step }) {
     const priceGroups = useArtifactValue(priceGroupsArtifact);
     const [selectedPriceGroups, setSelectedPriceGroups] = useArtifact(selectedPriceGroupsArtifact);
 
@@ -196,7 +198,7 @@ function Step1() {
     };
 
     const handlePriceGroupQuantityChange = (priceGroup, delta) => {
-        setSelectedPriceGroups((prev) => prev.map((pg) => (pg.id === priceGroup.id ? { ...pg, quantity: Math.max(5, Number(pg.quantity) + delta) } : pg)));
+        setSelectedPriceGroups((prev) => prev.map((pg) => (pg.id === priceGroup.id ? { ...pg, quantity: Math.min(999, Math.max(5, Number(pg.quantity) + delta)) } : pg)));
     };
 
     const handlePriceGroupQuantityInputChange = (priceGroup, value) => {
@@ -211,7 +213,8 @@ function Step1() {
 
     return (
         <div>
-            <h2>Vælg shops</h2>
+            <h2>{step.name}</h2>
+            <p className="step-description">{step.description}</p>
             <div className="price-groups-options">
                 {priceGroups.map((priceGroup) => {
                     const selected = selectedPriceGroups.find((pg) => pg.id === priceGroup.id);
@@ -295,6 +298,7 @@ function Step1() {
                                     className="view-selection-button"
                                     href={priceGroup.url}
                                     target="_blank"
+                                    onClick={(e) => e.stopPropagation()}
                                 >
                                     Se udvalg
                                 </a>
@@ -307,13 +311,14 @@ function Step1() {
     );
 }
 
-function Step2() {
+function Step2({ step }) {
     const deliveryMethods = useArtifactValue(deliveryMethodsArtifact);
     const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useArtifact(selectedDeliveryMethodArtifact);
 
     return (
         <div>
-            <h2>Vælg gavekort levering</h2>
+            <h2>{step.name}</h2>
+            <p className="step-description">{step.description}</p>
             <div className="delivery-methods-options">
                 {deliveryMethods.map((deliveryMethod) => (
                     <div
@@ -338,13 +343,14 @@ function Step2() {
     );
 }
 
-function Step3() {
+function Step3({ step }) {
     const deliverydates = useArtifactValue(deliveryDatesArtifact);
     const [selectedDeliveryDate, setSelectedDeliveryDate] = useArtifact(selectedDeliveryDateArtifact);
 
     return (
         <div>
-            <h2>Vælg pakkeleveringstidspunkt</h2>
+            <h2>{step.name}</h2>
+            <p className="step-description">{step.description}</p>
             <div className="delivery-dates-options">
                 {deliverydates.map((deliverydate) => (
                     <div
@@ -373,7 +379,7 @@ function Step3() {
     );
 }
 
-function Step4() {
+function Step4({ step }) {
     const [info, setInfo] = useArtifact(infoArtifact);
 
     const handleInfoChange = (key, value) => {
@@ -382,7 +388,8 @@ function Step4() {
 
     return (
         <div className="input-container-column">
-            <h2>Angiv din e-mail og firmanavn</h2>
+            <h2>{step.name}</h2>
+            <p className="step-description">{step.description}</p>
 
             <div className="input-container-row">
                 <div className="input-container required">
@@ -498,7 +505,7 @@ function Step4() {
     );
 }
 
-function Step5() {
+function Step5({ step }) {
     const selectedPriceGroups = useArtifactValue(selectedPriceGroupsArtifact);
     const selectedDeliveryMethod = useArtifactValue(selectedDeliveryMethodArtifact);
     const selectedDeliveryDate = useArtifactValue(selectedDeliveryDateArtifact);
@@ -535,7 +542,8 @@ function Step5() {
 
     return (
         <div className="order-summary">
-            <h2>Oversigt over din bestilling</h2>
+            <h2>{step.name}</h2>
+            <p className="step-description">{step.description}</p>
 
             <table className="summary-table">
                 <thead>
@@ -656,21 +664,19 @@ function formatPrice(value) {
 
 function CheckMark() {
     return (
-        <span>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-check-icon lucide-check"
-            >
-                <path d="M20 6 9 17l-5-5" />
-            </svg>
-        </span>
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-check-icon lucide-check"
+        >
+            <path d="M20 6 9 17l-5-5" />
+        </svg>
     );
 }

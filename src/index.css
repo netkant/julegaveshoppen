@@ -26,6 +26,11 @@ p {
   margin-top: 24px;
   padding-top: 20px;
   border-top: 1px solid #eee;
+  justify-content: space-between;
+}
+
+.step-1 .wizard-nav {
+  justify-content: flex-end;
 }
 
 .wizard-nav button {
@@ -121,8 +126,8 @@ p {
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   background-color: #8a130a;
   color: white;
   border-radius: 50%;
@@ -160,4 +165,12 @@ p {
 
 .input-container-column {
   max-width: 700px;
+}
+
+.step-content h2 {
+  margin-bottom: 8px !important;
+}
+
+.step-content .step-description {
+  margin-bottom: 24px !important;
 }

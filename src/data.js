@@ -7,23 +7,28 @@ export const jgVars = JSON.parse(document.getElementById("form-root").dataset.pa
 export const steps = [
     {
         id: 1,
-        name: "Vælg shops",
+        name: jgVars.steps && jgVars.steps[0].name ? jgVars.steps[0].name : "Vælg shops",
+        description: jgVars.steps && jgVars.steps[0].description ? jgVars.steps[0].description : "Vælg de shops du ønsker at bestille og hvor mange gaver der skal kunne bestilles.",
     },
     {
         id: 2,
-        name: "Vælg gavekort-leveringsmetode",
+        name: jgVars.steps && jgVars.steps[1].name ? jgVars.steps[1].name : "Vælg gavekort-leveringsmetode",
+        description: jgVars.steps && jgVars.steps[1].description ? jgVars.steps[1].description : "Vælg den leveringsmetode, du ønsker at bruge til at levere gavekortene.",
     },
     {
         id: 3,
-        name: "Vælg pakke-leveringstidspunkt",
+        name: jgVars.steps && jgVars.steps[2].name ? jgVars.steps[2].name : "Vælg gave-leveringstidspunkt",
+        description: jgVars.steps && jgVars.steps[2].description ? jgVars.steps[2].description : "Vælg det tidspunkt, du ønsker at gaverne leveres.",
     },
     {
         id: 4,
-        name: "Angiv din e-mail og firmanavn",
+        name: jgVars.steps && jgVars.steps[3].name ? jgVars.steps[3].name : "Angiv dine kontaktoplysninger",
+        description: jgVars.steps && jgVars.steps[3].description ? jgVars.steps[3].description : "Angiv dine kontaktoplysninger for at kunne bestille gaverne.",
     },
     {
         id: 5,
-        name: "Oversigt og bestilling",
+        name: jgVars.steps && jgVars.steps[4].name ? jgVars.steps[4].name : "Oversigt og bestilling",
+        description: jgVars.steps && jgVars.steps[4].description ? jgVars.steps[4].description : "Oversigt og bestilling af gaverne.",
     },
 ];
 

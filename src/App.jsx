@@ -77,6 +77,18 @@ function App() {
 
     const canAdvance = Boolean(canAdvanceFromStep[currentStep]);
 
+    const canNavigateToStep = (targetStep) => {
+        if (targetStep <= currentStep) {
+            return true;
+        }
+        for (let stepId = currentStep; stepId < targetStep; stepId++) {
+            if (!canAdvanceFromStep[stepId]) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     if (submitted) {
         return (
             <div className="wizard-page">
@@ -105,17 +117,21 @@ function App() {
         <div className="wizard-page">
             <h1>Bestil en julegaveshop</h1>
 
-            <div className="wizard">
+            <div className={`wizard wizard-step-${currentStep}`}>
                 <aside className="step-list">
                     <ol>
                         {steps.map((step) => {
                             const status = currentStep === step.id ? "active" : currentStep > step.id ? "completed" : "upcoming";
+                            const isClickable = step.id !== currentStep && canNavigateToStep(step.id);
+                            const isDisabled = status === "upcoming" && !isClickable;
                             return (
                                 <li
                                     key={step.id}
-                                    className={`step-item ${status}`}
+                                    className={`step-item ${status} ${isClickable ? "clickable" : ""} ${isDisabled ? "disabled" : ""}`}
+                                    onClick={isClickable ? () => setCurrentStep(step.id) : undefined}
+                                    aria-disabled={!isClickable}
                                 >
-                                    <span className="step-marker">{status === "completed" ? "✓" : step.id}</span>
+                                    <span className="step-marker">{status === "completed" ? <CheckMark /> : step.id}</span>
                                     <span className="step-label">
                                         <span className="step-kicker">Trin {step.id}</span>
                                         <span className="step-name">{step.name}</span>
@@ -240,6 +256,7 @@ function Step1({ step }) {
                             )}
                             <p className="price-group-option-name">{priceGroup.name}</p>
                             <div className="price-group-option-bottom">
+                                {!selected && <button className="select-button">Vælg gaveshop</button>}
                                 <div
                                     className="quantity-stepper"
                                     onClick={(e) => e.stopPropagation()}

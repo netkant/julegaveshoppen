@@ -127,4 +127,19 @@
     font-weight: 600;
     position: relative;
     z-index: 100;
+    transition: all 0.1s ease;
+}
+
+.select-button {
+    background-color: #3d2512;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    position: relative;
+    z-index: 100;
+    display: block;
+    cursor: pointer;
 }

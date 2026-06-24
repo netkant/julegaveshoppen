@@ -29,6 +29,12 @@
     gap: 12px;
 }
 
+@media (max-width: 720px) {
+    .delivery-methods-options {
+        grid-template-columns: 1fr;
+    }
+}
+
 .delivery-methods-options .option {
     display: flex;
     flex-direction: column;

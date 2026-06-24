@@ -513,10 +513,7 @@ function Step4({ step }) {
             </div>
 
             <div className="input-container-row">
-                <div
-                    className="input-container required"
-                    style={{ width: "33%" }}
-                >
+                <div className="input-container input-container-small required">
                     <label htmlFor="postal-code">Postnummer</label>
                     <input
                         id="postal-code"

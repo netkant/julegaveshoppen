@@ -4,6 +4,12 @@
     gap: 12px;
 }
 
+@media (max-width: 1114px) {
+    .price-groups-options {
+        grid-template-columns: 1fr;
+    }
+}
+
 .price-group-option {
     padding: 24px;
     width: 100%;

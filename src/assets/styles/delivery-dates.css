@@ -4,6 +4,12 @@
     gap: 12px;
 }
 
+@media (max-width: 720px) {
+    .delivery-dates-options {
+        grid-template-columns: 1fr;
+    }
+}
+
 .delivery-date-order-date span,
 .delivery-date-delivery-date span {
     font-weight: 600;

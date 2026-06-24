@@ -281,60 +281,62 @@ function Step1({ step }) {
                             <p className="price-group-option-name">{priceGroup.name}</p>
                             <div className="price-group-option-bottom">
                                 {!selected && <button className="select-button">Vælg gaveshop</button>}
-                                <div
-                                    className="quantity-stepper"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <button
-                                        type="button"
-                                        className="quantity-left"
-                                        onClick={() => handlePriceGroupQuantityChange(priceGroup, -1)}
+                                {selected && (
+                                    <div
+                                        className="quantity-stepper"
+                                        onClick={(e) => e.stopPropagation()}
                                     >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="20"
-                                            height="20"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            className="lucide lucide-minus-icon lucide-minus"
+                                        <button
+                                            type="button"
+                                            className="quantity-left"
+                                            onClick={() => handlePriceGroupQuantityChange(priceGroup, -1)}
                                         >
-                                            <path d="M5 12h14" />
-                                        </svg>
-                                    </button>
-                                    <input
-                                        className="quantity-stepper-value"
-                                        type="number"
-                                        min="5"
-                                        max="999"
-                                        value={selected ? selected.quantity : 5}
-                                        onChange={(e) => handlePriceGroupQuantityInputChange(priceGroup, e.target.value)}
-                                    />
-                                    <button
-                                        type="button"
-                                        className="quantity-right"
-                                        onClick={() => handlePriceGroupQuantityChange(priceGroup, 1)}
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="20"
-                                            height="20"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            className="lucide lucide-plus-icon lucide-plus"
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                className="lucide lucide-minus-icon lucide-minus"
+                                            >
+                                                <path d="M5 12h14" />
+                                            </svg>
+                                        </button>
+                                        <input
+                                            className="quantity-stepper-value"
+                                            type="number"
+                                            min="5"
+                                            max="999"
+                                            value={selected ? selected.quantity : 5}
+                                            onChange={(e) => handlePriceGroupQuantityInputChange(priceGroup, e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="quantity-right"
+                                            onClick={() => handlePriceGroupQuantityChange(priceGroup, 1)}
                                         >
-                                            <path d="M5 12h14" />
-                                            <path d="M12 5v14" />
-                                        </svg>
-                                    </button>
-                                </div>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                className="lucide lucide-plus-icon lucide-plus"
+                                            >
+                                                <path d="M5 12h14" />
+                                                <path d="M12 5v14" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                )}
                                 <a
                                     className="view-selection-button"
                                     href={priceGroup.url}

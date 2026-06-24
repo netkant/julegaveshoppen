@@ -174,3 +174,30 @@ p {
 .step-content .step-description {
   margin-bottom: 24px !important;
 }
+
+.wizard-container {
+  position: relative;
+}
+
+.wizard-close-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  background-color: #8a130a;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1002;
+}
+
+.wizard-close-button:hover {
+  background-color: #666;
+}

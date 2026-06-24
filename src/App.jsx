@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import "./assets/styles/fonts.css";
 import "./assets/styles/options.css";
 import "./assets/styles/steps.css";
@@ -23,6 +23,8 @@ import {
 
 function App() {
     const [currentStep, setCurrentStep] = useArtifact(currentStepArtifact);
+    const stepContentRef = useRef(null);
+    const shouldScrollRef = useRef(false);
     const [submitted, setSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -88,6 +90,26 @@ function App() {
         }
         return true;
     };
+
+    const handleNextClick = () => {
+        shouldScrollRef.current = true;
+        setCurrentStep(Math.min(currentStep + 1, steps.length));
+    };
+
+    useEffect(() => {
+        if (!shouldScrollRef.current) {
+            return;
+        }
+        shouldScrollRef.current = false;
+        requestAnimationFrame(() => {
+            const element = stepContentRef.current;
+            if (!element) {
+                return;
+            }
+            const top = element.getBoundingClientRect().top + window.scrollY - 16;
+            window.scrollTo({ top, behavior: "smooth" });
+        });
+    }, [currentStep]);
 
     if (submitted) {
         return (
@@ -165,7 +187,10 @@ function App() {
                         </ol>
                     </aside>
 
-                    <section className={`step-content step-${currentStep}`}>
+                    <section
+                        ref={stepContentRef}
+                        className={`step-content step-${currentStep}`}
+                    >
                         <Suspense fallback={<p>Indlæser...</p>}>
                             <Step step={steps.find((step) => step.id === currentStep)} />
                         </Suspense>
@@ -183,7 +208,7 @@ function App() {
                             {currentStep < steps.length ? (
                                 <button
                                     disabled={!canAdvance}
-                                    onClick={() => setCurrentStep(Math.min(currentStep + 1, steps.length))}
+                                    onClick={handleNextClick}
                                     className="next-button"
                                 >
                                     Næste
